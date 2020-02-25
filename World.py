@@ -1,4 +1,4 @@
-import heapq, math
+import heapq
 from copy import deepcopy
 
 # population is 0, regular resources are 1, created resources are 2, and waste is -1
@@ -6,12 +6,12 @@ RESOURCE_WEIGHTS = {
     "r1": 0,
     "r2": 1.0,
     "r3": 1.0,
-    "r21": 2.0,
-    "r22": 2.0,
-    "r23": 2.0,
-    "r21\'": -1,
+    "r21": 6.0,
+    "r22": 5.5,
+    "r23": 19.0,
+    "r21\'": -0.5,
     "r22\'": -1,
-    "r23\'": -1
+    "r23\'": -0.5
 }
 
 
@@ -68,7 +68,7 @@ class World:
                         for (resource, amt) in outputs:
                             successor_world.countries[country_index].resource_dict[resource] += size * amt
                         successor_world.big_U = successor_world.get_big_U()
-                        operation = ("TRANSFORM", {(r, size * a) for (r, a) in inputs}, {(r, size * a) for (r, a) in outputs})
+                        operation = ("TRANSFORM", {r: size * a for (r, a) in inputs}, {r: size * a for (r, a) in outputs})
                         suc.append((successor_world, operation))
 
         for first_ind in range(len(self.countries)):
