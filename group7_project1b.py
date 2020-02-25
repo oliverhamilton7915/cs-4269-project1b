@@ -14,7 +14,13 @@ def main():
 
     # Now, we create our world
     world = World(countries)
-    world.print()
+    world.print_world()
+
+    # Now, we want to generate our world's successors
+    world.generate_successors()
+    print("--- WORLD\'S SUCCESSORS: ---")
+    for suc in world.pq:
+        suc.print_world()
 
 if __name__ == "__main__":
     main()
