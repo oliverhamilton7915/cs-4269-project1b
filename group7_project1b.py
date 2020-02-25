@@ -17,9 +17,10 @@ def main():
     world.print_world()
 
     # Now, we want to generate our world's successors
-    world.generate_successors()
+    successors = world.generate_successors()
     print("--- WORLD\'S SUCCESSORS: ---")
-    for suc in world.pq:
+    for (suc, op) in successors:
+        print(op)
         suc.print_world()
 
 if __name__ == "__main__":

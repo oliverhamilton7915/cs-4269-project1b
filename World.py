@@ -37,7 +37,6 @@ class World:
     def __init__(self, countries):
         self.countries = countries
         self.big_U = self.get_big_U()
-        self.pq = []
 
     def __lt__(self, other):
         # This is unconventional here: we push worlds with the largest big_U value to the top of our priority queue
@@ -69,7 +68,8 @@ class World:
                         for (resource, amt) in outputs:
                             successor_world.countries[country_index].resource_dict[resource] += size * amt
                         successor_world.big_U = successor_world.get_big_U()
-                        suc.append(successor_world)
+                        operation = ("TRANSFORM", {(r, size * a) for (r, a) in inputs}, {(r, size * a) for (r, a) in outputs})
+                        suc.append((successor_world, operation))
 
         for first_ind in range(len(self.countries)):
             for second_ind in range(len(self.countries)):
@@ -87,10 +87,12 @@ class World:
                                             successor_world.countries[first_ind].resource_dict[resource_received] -= size
                                             successor_world.countries[second_ind].resource_dict[resource_given] += size
                                             successor_world.big_U = successor_world.get_big_U()
-                                            suc.append(successor_world)
+                                            operation = ("TRANSFER", self.countries[first_ind].name, resource_given, size,
+                                                         self.countries[second_ind].name, resource_received, size)
+                                            suc.append((successor_world, operation))
 
-        self.pq = suc
-        heapq.heapify(self.pq)
+        heapq.heapify(suc)
+        return suc
 
     def get_sd(self, vec):
         sd = 0
