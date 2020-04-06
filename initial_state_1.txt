@@ -1,0 +1,5 @@
+name Population MetallicElements Timber
+self 100 30 110
+germany 140 120 65
+thailand 190 130 100
+germany 35 12 45

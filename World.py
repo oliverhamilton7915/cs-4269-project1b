@@ -1,30 +1,25 @@
 import heapq
 from copy import deepcopy
 
-# population is 0, regular resources are 1, created resources are 2, and waste is -1
-RESOURCE_WEIGHTS = {
-    "r1": 0,
-    "r2": 1.0,
-    "r3": 1.0,
-    "r21": 6.0,
-    "r22": 5.5,
-    "r23": 19.0,
-    "r21\'": -0.5,
-    "r22\'": -1,
-    "r23\'": -0.5
-}
-
 
 class Country:
-    def __init__(self, name, resources_dict):
+    def __init__(self, name, resource_dict, resource_info):
         self.name = name
-        self.resource_dict = resources_dict
-        created_resources = ["r21", "r21\'", "r22", "r22\'", "r23", "r23\'"]
+        self.resource_info = resource_info
+        self.resource_dict = resource_dict
+        created_resources = ["PopulationWaste",
+                             "MetallicAlloys",
+                             "MetallicAlloysWaste",
+                             "Electronics",
+                             "ElectronicsWaste",
+                             "Housing",
+                             "HousingWaste"]
         for created in created_resources:
             self.resource_dict[created] = 0
 
     def get_utility(self):
-        return sum([value * RESOURCE_WEIGHTS[key] for (key, value) in self.resource_dict.items()])
+        return sum([value * self.resource_info[key]['weight'] * self.resource_info[key]['factor']
+                    for (key, value) in self.resource_dict.items()]) / float(self.resource_dict['Population'])
 
     def print_self(self):
         resource_str = self.name + ": "
@@ -39,7 +34,7 @@ class World:
         self.big_U = self.get_big_U()
 
     def __lt__(self, other):
-        # This is unconventional here: we push worlds with the largest big_U value to the top of our priority queue
+        # larger big U -> lesser ordering -> higher priority in queue
         return self.big_U > other.big_U
 
     def generate_successors(self):

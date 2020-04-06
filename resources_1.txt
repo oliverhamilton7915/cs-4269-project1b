@@ -1,0 +1,11 @@
+name weight factor
+Population 0.0 1
+PopulationWaste -0.1 1
+MetallicElements 1.0 1
+Timber 1.0 1
+MetallicAlloys 6 1
+MetallicAlloysWaste -0.5 1
+Electronics 5.5 1
+ElectronicsWaste -0.5 1
+Housing 19 1
+HousingWaste -0.5 1
