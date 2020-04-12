@@ -1,0 +1,4 @@
+(TRANSFORM {} (INPUTS (Population {}) (MetallicElements {})) (OUTPUTS (Population {}) (MetallicAlloys {}) (MetallicAlloysWaste {}))
+(TRANSFORM {} (INPUTS (Population {}) (MetallicElements {}) (MetallicAlloys {})) (OUTPUTS (Electronics {}) (ElectronicsWaste {}) (Population {}))
+(TRANSFORM {} (INPUTS (Population {}) (MetallicElements {}) (Timber {}) (MetallicAlloys {})) (OUTPUTS (Population {}) (Housing {}) (HousingWaste {}))
+(TRANSFER {} {} ({} {}))

@@ -1,4 +1,5 @@
 from World import Country, World
+import heapq
 
 
 def game_scheduler(country_name,
@@ -28,39 +29,52 @@ def game_scheduler(country_name,
     world = World(countries)
     world.print_world()
 
+    with open(operator_def_filename, 'r') as operator_temps:
+        data = operator_temps.readlines()
+        templates = tuple([row.rstrip() for row in data])
+
+    frontier = [world]
+    for iteration in range(depth_bound):
+        frontier = deepen_frontier(frontier, country_name, templates, frontier_max_size)
+        print("After iteration {}, created optimized frontier of length {}".format(iteration + 1, len(frontier)))
+
+    # Here is where we print schedules!
+    with open(output_schedule_filename, 'w') as output:
+        for i in range(min(num_output_schedules, frontier_max_size)):
+            # We cannot print more schedules than we have in our frontier!
+            current_world = heapq.heappop(frontier)
+            output.write('[ ')
+            for step in range(len(current_world.history)):
+                output.write('{} EU: {}\n'.format(*current_world.history[step]))
+            output.write(']\n')
+
+
+def deepen_frontier(frontier, country_name, templates, frontier_max_size):
+    temp_frontier = []
+    for cur_world in frontier:
+        heapq.heappush(temp_frontier, cur_world)
+        # loop over all get_successors
+        successors = cur_world.generate_successors(country_name, templates)
+        for successor in successors:
+            heapq.heappush(temp_frontier, successor)
+    # Here, we clip the length of the frontier
+    frontier = []
+    for i in range(min(frontier_max_size, len(temp_frontier))):
+        frontier.append(heapq.heappop(temp_frontier))
+    heapq.heapify(frontier)
+    return frontier
+
 
 def main():
-    # First, we need to create a few countries.
-    '''
-    france_resources = {"r1": 100, "r2": 30, "r3": 110}
-    france = Country("France", france_resources)
-    germany_resources = {"r1": 140, "r2": 120, "r3": 65}
-    germany = Country("Germany", germany_resources)
-    america_resources = {"r1": 190, "r2": 130, "r3": 100}
-    america = Country("America", america_resources)
-    thailand_resources = {"r1": 35, "r2": 12, "r3": 45}
-    thailand = Country("Thailand", thailand_resources)
-    countries = [france, germany, america, thailand]
+    game_scheduler('self',  # country_name
+                   'resources_1.txt',  # resources_filename
+                   'operator_def_1.txt',  # operator_def_filename
+                   'initial_state_1.txt',  # initial_state_filename
+                   'output_schedules_1.txt',  # output_schedule_filename
+                   20,  # num_output_schedules
+                   3,  # depth_bound
+                   100)  # frontier_max_size
 
-    # Now, we create our world
-    world = World(countries)
-    world.print_world()
-
-    # Now, we want to generate our world's successors
-    successors = world.generate_successors()
-    print("--- WORLD\'S SUCCESSORS: ---")
-    for (suc, op) in successors:
-        print(op)
-        suc.print_world()
-    '''
-    game_scheduler('self', # country_name
-                   'resources_1.txt', # resources_filename
-                   'operator_def_1.txt', # operator_def_filename
-                   'initial_state_1.txt', # inital_state_filename
-                   'output_schedules_1.txt', # output_schedule_filename
-                   3, # num_output_schedules
-                   5, # depth_bound
-                   200) # frontier_max_size
 
 if __name__ == "__main__":
     main()
